@@ -1,17 +1,6 @@
 require('dotenv').config();
-const {
-  Client,
-  GatewayIntentBits,
-  Partials,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  Events,
-  EmbedBuilder,
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
-} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events } = require('discord.js');
+require('dotenv').config();
 
 const client = new Client({
   intents: [
@@ -24,67 +13,46 @@ const client = new Client({
 });
 
 client.once('ready', () => {
-  console.log(`Zalogowano jako ${client.user.tag}`);
+  console.log(Zalogowano jako ${client.user.tag});
 });
 
-// Obsługa przycisku
 client.on('interactionCreate', async interaction => {
-  if (interaction.isButton() && interaction.customId === 'start_form') {
-    const modal = new ModalBuilder()
-      .setCustomId('user_form_modal')
-      .setTitle('Formularz użytkownika');
+  if (!interaction.isButton()) return;
 
-    const nameInput = new TextInputBuilder()
-      .setCustomId('user_name')
-      .setLabel('Jak masz na imię?')
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
+  if (interaction.customId === 'start_form') {
+    await interaction.reply({ content: 'Zaraz zadam Ci kilka pytań. Odpowiadaj po kolei.', ephemeral: true });
 
-    const ageInput = new TextInputBuilder()
-      .setCustomId('user_age')
-      .setLabel('Ile masz lat?')
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
+    const questions = [
+      'Jak masz na imię?',
+      'Ile masz lat?',
+      'Jaki jest Twój ulubiony kolor?'
+    ];
 
-    const colorInput = new TextInputBuilder()
-      .setCustomId('user_color')
-      .setLabel('Jaki jest Twój ulubiony kolor?')
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
+    const answers = [];
 
-    const firstRow = new ActionRowBuilder().addComponents(nameInput);
-    const secondRow = new ActionRowBuilder().addComponents(ageInput);
-    const thirdRow = new ActionRowBuilder().addComponents(colorInput);
+    const dmChannel = await interaction.user.createDM();
 
-    modal.addComponents(firstRow, secondRow, thirdRow);
+    for (let i = 0; i < questions.length; i++) {
+      await dmChannel.send(questions[i]);
 
-    await interaction.showModal(modal);
-  }
+      const collected = await dmChannel.awaitMessages({
+        max: 1,
+        time: 60000,
+        errors: ['time'],
+        filter: m => m.author.id === interaction.user.id
+      }).catch(() => null);
 
-  if (interaction.isModalSubmit() && interaction.customId === 'user_form_modal') {
-    const name = interaction.fields.getTextInputValue('user_name');
-    const age = interaction.fields.getTextInputValue('user_age');
-    const color = interaction.fields.getTextInputValue('user_color');
+      if (!collected) {
+        return dmChannel.send('Czas minął. Spróbuj ponownie klikając przycisk jeszcze raz.');
+      }
 
-    // Prosta walidacja wieku
-    if (isNaN(age) || parseInt(age) <= 0) {
-      return interaction.reply({
-        content: 'Wiek musi być liczbą większą od zera.',
-        ephemeral: true
-      });
+      answers.push(collected.first().content);
     }
 
-    const embed = new EmbedBuilder()
-      .setColor(0x00AE86)
-      .setTitle('Dziękujemy za odpowiedzi!')
-      .setDescription(`Oto Twoje odpowiedzi:\n1. Imię: ${name}\n2. Wiek: ${age}\n3. Kolor: ${color}`)
-      .setTimestamp();
-
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    dmChannel.send(Dziękuję za odpowiedzi! Oto one:\n1. ${answers[0]}\n2. ${answers[1]}\n3. ${answers[2]});
   }
 });
 
-// Komenda !start wysyłająca przycisk
 client.on('messageCreate', async message => {
   if (message.content === '!start') {
     const button = new ButtonBuilder()

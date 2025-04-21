@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); 
 const { Client, GatewayIntentBits, Partials, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
 
 const client = new Client({
@@ -30,14 +30,14 @@ client.on('interactionCreate', async interaction => {
 
     const answers = [];
 
-    // Pytania w kanale, nie w DM
+    // Pytanie jest wysyłane tylko raz
+    let questionMessage = await interaction.channel.send({
+      content: questions[0].question
+    });
+
+    // Czekanie na odpowiedź użytkownika dla każdego pytania
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
-      
-      // Wysyłanie pytania do tego samego kanału, w którym kliknięto przycisk
-      const questionMessage = await interaction.channel.send({
-        content: question.question
-      });
 
       // Czekanie na odpowiedź użytkownika
       const collected = await interaction.channel.awaitMessages({
@@ -59,6 +59,11 @@ client.on('interactionCreate', async interaction => {
       }
 
       answers.push(answer);
+
+      // Zaktualizuj wiadomość z pytaniem, aby wyświetlić odpowiedź
+      if (i < questions.length - 1) {
+        questionMessage = await questionMessage.edit({ content: questions[i + 1].question });
+      }
     }
 
     // Wysłanie podsumowania odpowiedzi w kanale

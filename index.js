@@ -30,12 +30,12 @@ client.on('interactionCreate', async interaction => {
 
     const answers = [];
 
-    // Pytanie jest wysyłane tylko raz
+    // Wysyłamy pierwsze pytanie tylko raz
     let questionMessage = await interaction.channel.send({
       content: questions[0].question
     });
 
-    // Czekanie na odpowiedź użytkownika dla każdego pytania
+    // Czekanie na odpowiedzi użytkownika dla każdego pytania
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
 
@@ -60,9 +60,9 @@ client.on('interactionCreate', async interaction => {
 
       answers.push(answer);
 
-      // Zaktualizuj wiadomość z pytaniem, aby wyświetlić odpowiedź
+      // Jeśli to nie ostatnie pytanie, edytuj wiadomość, aby zadać kolejne pytanie
       if (i < questions.length - 1) {
-        questionMessage = await questionMessage.edit({ content: questions[i + 1].question });
+        await questionMessage.edit({ content: questions[i + 1].question });
       }
     }
 

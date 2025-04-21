@@ -68,7 +68,7 @@ client.on('interactionCreate', async interaction => {
       }
     }
 
-    dmChannel.send(`Dziękuję za odpowiedzi! Oto one:\n1. ${answers[0]}\n2. ${answers[1]}\n3. ${answers[2]}`);
+    dmChannel.send(`*Weryfikacja może trwać do 5 minut`);
   }
 });
 

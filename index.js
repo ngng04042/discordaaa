@@ -69,7 +69,7 @@ console.log(`[DEBUG] Bot uruchomiony z PID: ${process.pid} o ${new Date().toLoca
        }
      }
  
-     dmChannel.send(`*Weryfikacja może trwać do 5 minut`);
+     
      dmChannel.send(`*Weryfikacja może trwać do 5 minut*`);
    }
  });
